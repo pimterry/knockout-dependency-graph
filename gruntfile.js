@@ -1,7 +1,6 @@
 'use strict';
 
 module.exports = function (grunt) {
-
     // Project configuration.
     grunt.initConfig({
         // Metadata.
@@ -20,7 +19,20 @@ module.exports = function (grunt) {
                 template: require('grunt-template-jasmine-istanbul'),
                 templateOptions: {
                     coverage: 'coverage-result/coverage.json',
-                    report: 'coverage-result',
+                    report: [
+                        {
+                            type: 'html',
+                            options: {
+                                dir: 'coverage-result'
+                            }
+                        },
+                        {
+                            type: 'lcov',
+                            options: {
+                                dir: 'coverage-result'
+                            }
+                        }
+                    ],
 
                     template: require('grunt-template-jasmine-requirejs'),
                     templateOptions: {
@@ -88,8 +100,26 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-open');
 
+    // Coveralls running task
+    grunt.registerTask('coveralls', 'Push coverage results to coveralls.io', function () {
+        var done = this.async();
+
+        var child_process = require('child_process');
+        var coveralls = child_process.spawn("node",["node_modules/.bin/coveralls"], {
+            stdio: ['pipe', process.stdout, process.stderr]
+        });
+
+        coveralls.on('exit', function (code) {
+           done(code === 0);
+        });
+
+        var fs = require('fs');
+        coveralls.stdin.end(fs.readFileSync('./coverage-result/lcov.info', 'utf8'));
+    });
+
     // Default task.
     grunt.registerTask('default', ['test']);
+    grunt.registerTask('ci', ['test', 'coveralls']);
     grunt.registerTask('test', ['jshint', 'jasmine']);
     grunt.registerTask('integration-test', ['jasmine:src:build', 'open:jasmine', 'connect:test:keepalive']);
 
