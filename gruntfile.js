@@ -12,50 +12,70 @@ module.exports = function (grunt) {
             '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
             ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
         // Task configuration.
-        intern: {
-            browser: {
-                options: {
-                    runType: 'runner',
-                    reporters: ['lcov', 'runner'],
-                    config: 'test/intern-config.js'
-                }
-            },
-            node: {
-                options: {
-                    runType: 'client',
-                    reporters: ['lcov', 'console'],
-                    config: 'test/intern-config.js'
+        jasmine: {
+            src: [],
+            options: {
+                specs: 'test/*-test.js',
+                helpers: 'test/*-helper.js',
+                template: require('grunt-template-jasmine-requirejs'),
+                templateOptions: {
+                    requireConfig: {
+                        paths: {
+                            "knockout3": "test/vendor/knockout-3.0.0.debug"
+                        }
+                    }
                 }
             }
         },
+        open: {
+            jasmine: {
+                path: 'http://127.0.0.1:8000/_SpecRunner.html'
+            }
+        },
+        connect: {
+            test: {
+                port: 8000,
+                keepalive: true
+            }
+        },
         jshint: {
-            js: {
+            options: {
+                jshintrc: '.jshintrc'
+            },
+            gruntfile: {
+                src: 'gruntfile.js'
+            },
+            lib: {
                 options: {
                     jshintrc: 'lib/.jshintrc'
                 },
-                src: ['lib/**/*.js', '!lib/vendor/*.js']
+                src: ['lib/**/*.js']
             },
             test: {
                 options: {
                     jshintrc: 'test/.jshintrc'
                 },
-                src: ['test/**/*.js', '!test/lib/*.js']
+                src: ['test/*.js']
             }
         },
         watch: {
-            js: {
-                files: '<%= jshint.js.src %>',
-                tasks: ['jshint:js', 'connect:briefly', 'intern:node']
+            gruntfile: {
+                files: '<%= jshint.gruntfile.src %>',
+                tasks: ['jshint:gruntfile']
+            },
+            lib: {
+                files: '<%= jshint.lib.src %>',
+                tasks: ['jshint:lib', 'jasmine']
             },
             test: {
                 files: '<%= jshint.test.src %>',
-                tasks: ['jshint:test', 'connect:briefly', 'intern:node']
+                tasks: ['jshint:test', 'jasmine']
             }
         }
     });
 
     // These plugins provide necessary tasks.
-    grunt.loadNpmTasks('intern');
+    grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
@@ -64,6 +84,7 @@ module.exports = function (grunt) {
 
     // Default task.
     grunt.registerTask('default', ['test']);
-    grunt.registerTask('test', ['jshint', 'intern:node']);
+    grunt.registerTask('test', ['jshint', 'jasmine']);
+    grunt.registerTask('integration-test', ['jasmine:src:build', 'open:jasmine', 'connect:test:keepalive']);
 
 };
