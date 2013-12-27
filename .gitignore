@@ -4,3 +4,4 @@ node_modules
 lcov.info
 .grunt
 _SpecRunner.html
+coverage-result

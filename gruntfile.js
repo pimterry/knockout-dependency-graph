@@ -13,15 +13,21 @@ module.exports = function (grunt) {
             ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
         // Task configuration.
         jasmine: {
-            src: [],
+            src: ['lib/*.js'],
             options: {
                 specs: 'test/*-test.js',
                 helpers: 'test/*-helper.js',
-                template: require('grunt-template-jasmine-requirejs'),
+                template: require('grunt-template-jasmine-istanbul'),
                 templateOptions: {
-                    requireConfig: {
-                        paths: {
-                            "knockout3": "test/vendor/knockout-3.0.0.debug"
+                    coverage: 'coverage-result/coverage.json',
+                    report: 'coverage-result',
+
+                    template: require('grunt-template-jasmine-requirejs'),
+                    templateOptions: {
+                        requireConfig: {
+                            paths: {
+                                "knockout3": "test/vendor/knockout-3.0.0.debug"
+                            }
                         }
                     }
                 }
