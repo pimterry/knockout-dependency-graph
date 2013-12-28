@@ -43,6 +43,21 @@ module.exports = function (grunt) {
         coveralls: {
             src: 'coverage-result/lcov.info'
         },
+        dox: {
+            options: {
+                title: 'Knockout Dependency Graph'
+            },
+            files: {
+                src: 'lib/',
+                dest: 'docs'
+            }
+        },
+        "gh-pages": {
+            options: {
+                base: 'docs'
+            },
+            src: '**'
+        },
         open: {
             jasmine: {
                 path: 'http://127.0.0.1:8000/_SpecRunner.html'
@@ -94,6 +109,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-coveralls');
+    grunt.loadNpmTasks('grunt-dox');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
     grunt.loadNpmTasks('grunt-contrib-connect');

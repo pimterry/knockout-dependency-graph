@@ -1,6 +1,7 @@
 .idea
 *.iml
 node_modules
+docs
 lcov.info
 .grunt
 _SpecRunner.html
