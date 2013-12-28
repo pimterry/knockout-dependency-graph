@@ -38,6 +38,7 @@ module.exports = function (grunt) {
                     templateOptions: {
                         requireConfig: {
                             paths: {
+                                "lib": '.grunt/grunt-contrib-jasmine/lib/',
                                 "knockout3": "test/vendor/knockout-3.0.0.debug"
                             }
                         }
