@@ -54,9 +54,9 @@ module.exports = function (grunt) {
         },
         "gh-pages": {
             options: {
-                base: 'docs'
+                base: '.'
             },
-            src: '**'
+            src: 'docs/**/*'
         },
         open: {
             jasmine: {
@@ -109,7 +109,11 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-coveralls');
+
     grunt.loadNpmTasks('grunt-dox');
+    grunt.loadNpmTasks('grunt-gh-pages');
+
+
     grunt.loadNpmTasks('grunt-contrib-watch');
 
     grunt.loadNpmTasks('grunt-contrib-connect');
