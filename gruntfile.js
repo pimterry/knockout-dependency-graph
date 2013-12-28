@@ -1,6 +1,40 @@
 'use strict';
 
 module.exports = function (grunt) {
+    function coverageConfigForSuite(suiteName) {
+        return {
+            src: ['lib/*.js'],
+            options: {
+                specs: ['test/' + suiteName + '/**/*.js'],
+                template: require('grunt-template-jasmine-istanbul'),
+                templateOptions: {
+                    coverage: 'coverage-result/' + suiteName + '/coverage.json',
+                    report: [{
+                        type: 'html',
+                        options: {
+                            dir: 'coverage-result/' + suiteName
+                        }
+                    }, {
+                        type: 'lcov',
+                        options: {
+                            dir: 'coverage-result/' + suiteName
+                        }
+                    }],
+
+                    template: require('grunt-template-jasmine-requirejs'),
+                    templateOptions: {
+                        requireConfig: {
+                            paths: {
+                                "lib": '.grunt/grunt-contrib-jasmine/lib/',
+                                "knockout3": "test/vendor/knockout-3.0.0.debug"
+                            }
+                        }
+                    }
+                }
+            }
+        };
+    }
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
@@ -10,41 +44,11 @@ module.exports = function (grunt) {
             ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
         jasmine: {
             options: {
-                specs: ['test/unit/*.js', 'test/functional/*.js'],
                 helpers: 'test/*-helper.js'
-            },
-            withcoverage: {
-                src: ['lib/*.js'],
-                options: {
-                    template: require('grunt-template-jasmine-istanbul'),
-                    templateOptions: {
-                        coverage: 'coverage-result/coverage.json',
-                        report: [{
-                            type: 'html',
-                            options: {
-                                dir: 'coverage-result'
-                            }
-                        }, {
-                            type: 'lcov',
-                            options: {
-                                dir: 'coverage-result'
-                            }
-                        }],
-
-                        template: require('grunt-template-jasmine-requirejs'),
-                        templateOptions: {
-                            requireConfig: {
-                                paths: {
-                                    "lib": '.grunt/grunt-contrib-jasmine/lib/',
-                                    "knockout3": "test/vendor/knockout-3.0.0.debug"
-                                }
-                            }
-                        }
-                    }
-                }
             },
             pure: {
                 options: {
+                    specs: ['test/unit/*.js', 'test/functional/*.js'],
                     template: require('grunt-template-jasmine-requirejs'),
                     templateOptions: {
                         requireConfig: {
@@ -54,10 +58,12 @@ module.exports = function (grunt) {
                         }
                     }
                 }
-            }
+            },
+            unitWithCoverage: coverageConfigForSuite('unit'),
+            functionalWithCoverage: coverageConfigForSuite('functional')
         },
         coveralls: {
-            src: 'coverage-result/lcov.info'
+            src: 'coverage-result/*/lcov.info'
         },
         dox: {
             options: {
@@ -137,10 +143,12 @@ module.exports = function (grunt) {
 
     // Default task.
     grunt.registerTask('default', ['test']);
-    grunt.registerTask('ci', ['test', 'coverage']);
-
     grunt.registerTask('test', ['jshint', 'jasmine:pure']);
-    grunt.registerTask('coverage', ['jasmine:withcoverage', 'coveralls']);
+
+    grunt.registerTask('ci', ['test', 'coverage']);
+    grunt.registerTask('coverage', ['jasmine:unitWithCoverage',
+                                    'jasmine:functionalWithCoverage',
+                                    'coveralls']);
 
     grunt.registerTask('browser-test', ['jasmine:src:build', 'open:jasmine', 'connect:test:keepalive']);
 
