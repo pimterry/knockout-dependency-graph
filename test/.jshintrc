@@ -26,6 +26,7 @@
     "xdescribe": false,
     "expect": false,
     "it": false,
+    "xit": false,
     "jasmine": false,
     "waitsFor": false,
     "runs": false
