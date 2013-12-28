@@ -1,4 +1,7 @@
 language: node_js
 node_js:
   - "0.10"
+env:
+  - TEST_TYPE_TO_RUN=functional
+  - TEST_TYPE_TO_RUN=unit
 script: "grunt ci"

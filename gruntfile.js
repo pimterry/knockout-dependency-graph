@@ -1,40 +1,6 @@
 'use strict';
 
 module.exports = function (grunt) {
-    function coverageConfigForSuite(suiteName) {
-        return {
-            src: ['lib/*.js'],
-            options: {
-                specs: ['test/' + suiteName + '/**/*.js'],
-                template: require('grunt-template-jasmine-istanbul'),
-                templateOptions: {
-                    coverage: 'coverage-result/' + suiteName + '/coverage.json',
-                    report: [{
-                        type: 'html',
-                        options: {
-                            dir: 'coverage-result/' + suiteName
-                        }
-                    }, {
-                        type: 'lcov',
-                        options: {
-                            dir: 'coverage-result/' + suiteName
-                        }
-                    }],
-
-                    template: require('grunt-template-jasmine-requirejs'),
-                    templateOptions: {
-                        requireConfig: {
-                            paths: {
-                                "lib": '.grunt/grunt-contrib-jasmine/lib/',
-                                "knockout3": "test/vendor/knockout-3.0.0.debug"
-                            }
-                        }
-                    }
-                }
-            }
-        };
-    }
-
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
@@ -42,13 +8,14 @@ module.exports = function (grunt) {
             '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
             '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
             ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
+        testFolderToRun: process.env.TEST_TYPE_TO_RUN || "**",
         jasmine: {
             options: {
                 helpers: 'test/*-helper.js'
             },
             pure: {
                 options: {
-                    specs: ['test/unit/*.js', 'test/functional/*.js'],
+                    specs: ['test/<%= testFolderToRun %>/**/*.js'],
                     template: require('grunt-template-jasmine-requirejs'),
                     templateOptions: {
                         requireConfig: {
@@ -59,16 +26,43 @@ module.exports = function (grunt) {
                     }
                 }
             },
-            unitWithCoverage: coverageConfigForSuite('unit'),
-            functionalWithCoverage: coverageConfigForSuite('functional')
+            withCoverage: {
+                src: ['lib/*.js'],
+                options: {
+                    specs: ['test/<%= testFolderToRun %>/**/*.js'],
+                    template: require('grunt-template-jasmine-istanbul'),
+                    templateOptions: {
+                        coverage: 'coverage-result/coverage.json',
+                        report: [
+                            {
+                                type: 'html',
+                                options: {
+                                    dir: 'coverage-result'
+                                }
+                            },
+                            {
+                                type: 'lcov',
+                                options: {
+                                    dir: 'coverage-result'
+                                }
+                            }
+                        ],
+
+                        template: require('grunt-template-jasmine-requirejs'),
+                        templateOptions: {
+                            requireConfig: {
+                                paths: {
+                                    "lib": '.grunt/grunt-contrib-jasmine/lib/',
+                                    "knockout3": "test/vendor/knockout-3.0.0.debug"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         },
         coveralls: {
-            unit: {
-                src: 'coverage-result/unit/lcov.info'
-            },
-            functional: {
-                src: 'coverage-result/functional/lcov.info'
-            }
+            src: 'coverage-result/lcov.info'
         },
         dox: {
             options: {
@@ -151,8 +145,7 @@ module.exports = function (grunt) {
     grunt.registerTask('test', ['jshint', 'jasmine:pure']);
 
     grunt.registerTask('ci', ['test', 'coverage']);
-    grunt.registerTask('coverage', ['jasmine:unitWithCoverage', 'coveralls:unit',
-                                    'jasmine:functionalWithCoverage', 'coveralls:functional']);
+    grunt.registerTask('coverage', ['jasmine:withCoverage', 'coveralls']);
 
     grunt.registerTask('browser-test', ['jasmine:src:build', 'open:jasmine', 'connect:test:keepalive']);
 
