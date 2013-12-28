@@ -45,7 +45,7 @@
   },
   "jam": {
     "dependencies": {},
-    "main": "lib/knockout-dependency-graph.js"
+    "main": "lib/main.js"
   },
   "keywords": [
     "knockout",

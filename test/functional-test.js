@@ -2,7 +2,7 @@
 
 define([
     'knockout3',
-    'lib/knockout-dependency-graph'
+    'lib/main'
 ], function(ko, KoDependencyGraph) {
     describe('Functional tests', function () {
         describe('Basic usage', function () {
