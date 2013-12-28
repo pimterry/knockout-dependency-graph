@@ -45,6 +45,9 @@ module.exports = function (grunt) {
                 }
             }
         },
+        coveralls: {
+            src: 'coverage-result/lcov.info'
+        },
         open: {
             jasmine: {
                 path: 'http://127.0.0.1:8000/_SpecRunner.html'
@@ -95,27 +98,11 @@ module.exports = function (grunt) {
     // These plugins provide necessary tasks.
     grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-coveralls');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-open');
-
-    // Coveralls running task
-    grunt.registerTask('coveralls', 'Push coverage results to coveralls.io', function () {
-        var done = this.async();
-
-        var child_process = require('child_process');
-        var coveralls = child_process.spawn("node",["node_modules/.bin/coveralls"], {
-            stdio: ['pipe', process.stdout, process.stderr]
-        });
-
-        coveralls.on('exit', function (code) {
-           done(code === 0);
-        });
-
-        var fs = require('fs');
-        coveralls.stdin.end(fs.readFileSync('./coverage-result/lcov.info', 'utf8'));
-    });
 
     // Default task.
     grunt.registerTask('default', ['test']);
