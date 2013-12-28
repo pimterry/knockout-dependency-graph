@@ -1,38 +1,32 @@
 'use strict';
 
 module.exports = function (grunt) {
-    // Project configuration.
     grunt.initConfig({
-        // Metadata.
         pkg: grunt.file.readJSON('package.json'),
         banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
             '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
             '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
             '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
             ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
-        // Task configuration.
         jasmine: {
             src: ['lib/*.js'],
             options: {
-                specs: 'test/*-test.js',
+                specs: ['test/unit/*.js', 'test/functional/*.js'],
                 helpers: 'test/*-helper.js',
                 template: require('grunt-template-jasmine-istanbul'),
                 templateOptions: {
                     coverage: 'coverage-result/coverage.json',
-                    report: [
-                        {
-                            type: 'html',
-                            options: {
-                                dir: 'coverage-result'
-                            }
-                        },
-                        {
-                            type: 'lcov',
-                            options: {
-                                dir: 'coverage-result'
-                            }
+                    report: [{
+                        type: 'html',
+                        options: {
+                            dir: 'coverage-result'
                         }
-                    ],
+                    }, {
+                        type: 'lcov',
+                        options: {
+                            dir: 'coverage-result'
+                        }
+                    }],
 
                     template: require('grunt-template-jasmine-requirejs'),
                     templateOptions: {
@@ -77,7 +71,7 @@ module.exports = function (grunt) {
                 options: {
                     jshintrc: 'test/.jshintrc'
                 },
-                src: ['test/*.js']
+                src: ['test/**/*.js', '!test/vendor/*.js']
             }
         },
         watch: {
@@ -109,6 +103,6 @@ module.exports = function (grunt) {
     grunt.registerTask('default', ['test']);
     grunt.registerTask('ci', ['test', 'coveralls']);
     grunt.registerTask('test', ['jshint', 'jasmine']);
-    grunt.registerTask('integration-test', ['jasmine:src:build', 'open:jasmine', 'connect:test:keepalive']);
+    grunt.registerTask('browser-test', ['jasmine:src:build', 'open:jasmine', 'connect:test:keepalive']);
 
 };
