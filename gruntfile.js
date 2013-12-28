@@ -63,7 +63,12 @@ module.exports = function (grunt) {
             functionalWithCoverage: coverageConfigForSuite('functional')
         },
         coveralls: {
-            src: 'coverage-result/*/lcov.info'
+            unit: {
+                src: 'coverage-result/unit/lcov.info'
+            },
+            functional: {
+                src: 'coverage-result/functional/lcov.info'
+            }
         },
         dox: {
             options: {
@@ -146,9 +151,8 @@ module.exports = function (grunt) {
     grunt.registerTask('test', ['jshint', 'jasmine:pure']);
 
     grunt.registerTask('ci', ['test', 'coverage']);
-    grunt.registerTask('coverage', ['jasmine:unitWithCoverage',
-                                    'jasmine:functionalWithCoverage',
-                                    'coveralls']);
+    grunt.registerTask('coverage', ['jasmine:unitWithCoverage', 'coveralls:unit',
+                                    'jasmine:functionalWithCoverage', 'coveralls:functional']);
 
     grunt.registerTask('browser-test', ['jasmine:src:build', 'open:jasmine', 'connect:test:keepalive']);
 
