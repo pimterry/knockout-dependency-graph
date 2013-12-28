@@ -9,30 +9,46 @@ module.exports = function (grunt) {
             '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
             ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
         jasmine: {
-            src: ['lib/*.js'],
             options: {
                 specs: ['test/unit/*.js', 'test/functional/*.js'],
-                helpers: 'test/*-helper.js',
-                template: require('grunt-template-jasmine-istanbul'),
-                templateOptions: {
-                    coverage: 'coverage-result/coverage.json',
-                    report: [{
-                        type: 'html',
-                        options: {
-                            dir: 'coverage-result'
-                        }
-                    }, {
-                        type: 'lcov',
-                        options: {
-                            dir: 'coverage-result'
-                        }
-                    }],
+                helpers: 'test/*-helper.js'
+            },
+            withcoverage: {
+                src: ['lib/*.js'],
+                options: {
+                    template: require('grunt-template-jasmine-istanbul'),
+                    templateOptions: {
+                        coverage: 'coverage-result/coverage.json',
+                        report: [{
+                            type: 'html',
+                            options: {
+                                dir: 'coverage-result'
+                            }
+                        }, {
+                            type: 'lcov',
+                            options: {
+                                dir: 'coverage-result'
+                            }
+                        }],
 
+                        template: require('grunt-template-jasmine-requirejs'),
+                        templateOptions: {
+                            requireConfig: {
+                                paths: {
+                                    "lib": '.grunt/grunt-contrib-jasmine/lib/',
+                                    "knockout3": "test/vendor/knockout-3.0.0.debug"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            pure: {
+                options: {
                     template: require('grunt-template-jasmine-requirejs'),
                     templateOptions: {
                         requireConfig: {
                             paths: {
-                                "lib": '.grunt/grunt-contrib-jasmine/lib/',
                                 "knockout3": "test/vendor/knockout-3.0.0.debug"
                             }
                         }
@@ -121,8 +137,11 @@ module.exports = function (grunt) {
 
     // Default task.
     grunt.registerTask('default', ['test']);
-    grunt.registerTask('ci', ['test', 'coveralls']);
-    grunt.registerTask('test', ['jshint', 'jasmine']);
+    grunt.registerTask('ci', ['test', 'coverage']);
+
+    grunt.registerTask('test', ['jshint', 'jasmine:pure']);
+    grunt.registerTask('coverage', ['jasmine:withcoverage', 'coveralls']);
+
     grunt.registerTask('browser-test', ['jasmine:src:build', 'open:jasmine', 'connect:test:keepalive']);
 
 };
