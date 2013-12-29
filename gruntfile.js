@@ -147,6 +147,6 @@ module.exports = function (grunt) {
     grunt.registerTask('ci', ['test', 'coverage']);
     grunt.registerTask('coverage', ['jasmine:withCoverage', 'coveralls']);
 
-    grunt.registerTask('browser-test', ['jasmine:src:build', 'open:jasmine', 'connect:test:keepalive']);
+    grunt.registerTask('browser-test', ['jasmine:pure:build', 'open:jasmine', 'connect:test:keepalive']);
 
 };
