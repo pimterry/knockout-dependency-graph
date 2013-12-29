@@ -11,11 +11,12 @@ module.exports = function (grunt) {
         testFolderToRun: process.env.TEST_TYPE_TO_RUN || "**",
         jasmine: {
             options: {
-                helpers: 'test/*-helper.js'
+                helpers: 'test/*-helper.js',
+                specs: ['test/<%= testFolderToRun %>/**/*.js']
             },
             pure: {
+                src: ['lib/*.js'],
                 options: {
-                    specs: ['test/<%= testFolderToRun %>/**/*.js'],
                     template: require('grunt-template-jasmine-requirejs'),
                     templateOptions: {
                         requireConfig: {
@@ -29,7 +30,6 @@ module.exports = function (grunt) {
             withCoverage: {
                 src: ['lib/*.js'],
                 options: {
-                    specs: ['test/<%= testFolderToRun %>/**/*.js'],
                     template: require('grunt-template-jasmine-istanbul'),
                     templateOptions: {
                         coverage: 'coverage-result/coverage.json',
