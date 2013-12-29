@@ -29,6 +29,7 @@
     "xit": false,
     "jasmine": false,
     "waitsFor": false,
+    "beforeEachReload": false,
     "runs": false
   }
 }

@@ -29,14 +29,14 @@ define([
             });
             var unreadObservable = ko.observable();
 
-            expect(graph.nodes[0].subscribers).toEqual([computed]);
-            expect(graph.nodes[0].subscriptions).toEqual([]);
+            expect(graph.nodeFor(observable).subscribers).toEqual([computed]);
+            expect(graph.nodeFor(observable).subscriptions).toEqual([]);
 
-            expect(graph.nodes[1].subscribers).toEqual([]);
-            expect(graph.nodes[1].subscriptions).toEqual([observable]);
+            expect(graph.nodeFor(computed).subscribers).toEqual([]);
+            expect(graph.nodeFor(computed).subscriptions).toEqual([observable]);
 
-            expect(graph.nodes[2].subscribers).toEqual([]);
-            expect(graph.nodes[2].subscriptions).toEqual([]);
+            expect(graph.nodeFor(unreadObservable).subscribers).toEqual([]);
+            expect(graph.nodeFor(unreadObservable).subscriptions).toEqual([]);
         });
     });
 });
