@@ -7,3 +7,7 @@ knockout-dependency-graph
 
 
 Knockout plugin to track your KO observable's dependencies, and the updates triggered from them, for later analysis
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/pimterry/knockout-dependency-graph/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
